@@ -1,10 +1,10 @@
-import {GlobalAcceptMimesMiddleware, ServerLoader, ServerSettings} from "@tsed/common";
+import {GlobalAcceptMimesMiddleware, Inject, Module, PlatformApplication, ServerSettings} from "@tsed/common";
 import "@tsed/swagger";
 import * as bodyParser from "body-parser";
 import * as compress from "compression";
 import * as cookieParser from "cookie-parser";
-import * as methodOverride from "method-override";
 import * as cors from "cors";
+import * as methodOverride from "method-override";
 import {join} from "path";
 import {RestCtrl} from "./controllers/RestCtrl";
 
@@ -44,17 +44,16 @@ const rootDir = __dirname;
     "/statics": join(__dirname, "..", "statics")
   }
 })
-export class Server extends ServerLoader {
-  constructor(settings) {
-    super(settings);
-  }
+export class Server {
+  @Inject()
+  app: PlatformApplication;
 
   /**
    * This method let you configure the middleware required by your application to works.
    * @returns {Server}
    */
   $beforeRoutesInit(): void | Promise<any> {
-    this
+    this.app
       .use(cors())
       .use(GlobalAcceptMimesMiddleware)
       .use(cookieParser())
